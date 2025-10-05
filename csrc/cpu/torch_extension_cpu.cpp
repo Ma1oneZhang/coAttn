@@ -81,6 +81,19 @@ void decode_attention_cpu(
     double sm_scale,
     double logit_cap);
 
+void flash_paged_attention_cpu(
+    at::Tensor& query,
+    at::Tensor& k_buffer,
+    at::Tensor& v_buffer,
+    at::Tensor& output,
+    at::Tensor& lse,
+    at::Tensor& block_table,
+    at::Tensor& cu_q_lens,
+    at::Tensor& seq_lens,
+    at::Tensor& q_lens,
+    double sm_scale,
+    double logit_cap);
+
 void extend_attention_cpu(
     at::Tensor& q_extend,
     at::Tensor& k_extend,
@@ -287,6 +300,12 @@ TORCH_LIBRARY_FRAGMENT(sgl_kernel, m) {
       "Tensor loc, Tensor attn_logits, Tensor req_to_token, Tensor req_pool_indices, Tensor seq_lens, float sm_scale, "
       "float logit_cap) -> ()");
   m.impl("decode_attention_cpu", torch::kCPU, &decode_attention_cpu);
+  // flash paged attention (combined prefill + decode)
+  m.def(
+      "flash_paged_attention_cpu(Tensor query, Tensor k_buffer, Tensor v_buffer, Tensor(a!) output, Tensor lse, "
+      "Tensor block_table, Tensor cu_q_lens, Tensor seq_lens, Tensor q_lens, float sm_scale, "
+      "float logit_cap) -> ()");
+  m.impl("flash_paged_attention_cpu", torch::kCPU, &flash_paged_attention_cpu);
 
   // extend
   m.def(

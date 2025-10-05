@@ -101,7 +101,7 @@ namespace {
   CHECK_CPU(x);                            \
   CHECK_LAST_DIM_CONTIGUOUS(x)
 
-#define CHECK_DIM(d, x) TORCH_CHECK(x.dim() == d, #x " must be a " #d "D tensor")
+#define CHECK_DIM(d, x) TORCH_CHECK(x.dim() == d, #x " must be a " #d "D tensor, and the got ", x.dim(), "D")
 
 #define CHECK_EQ(a, b) TORCH_CHECK((a) == (b), "CHECK_EQ(" #a ", " #b ") failed. ", a, " vs ", b)
 
